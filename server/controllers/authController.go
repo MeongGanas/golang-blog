@@ -94,3 +94,16 @@ func User(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(user)
 }
+
+func Logout(c *fiber.Ctx) error {
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+
+	return c.Status(200).JSON(fiber.Map{"msg": "Logout success"})
+}
