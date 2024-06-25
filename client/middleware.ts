@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isAuthPath = path.startsWith("/login") || path.startsWith("/register");
 
-  const token = request.cookies.get("token");
+  const cookie = request.headers.get("cookie") || "";
 
-  if (!token) {
+  const response = await (
+    await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/user`, {
+      headers: { "Content-Type": "application/json", cookie },
+    })
+  ).json();
+
+  if (!response.id) {
     if (isAuthPath) {
       return NextResponse.next();
     }

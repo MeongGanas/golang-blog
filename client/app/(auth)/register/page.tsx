@@ -30,7 +30,7 @@ export default function Register() {
 
     startTransition(async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/register`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

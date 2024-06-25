@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import { SyntheticEvent, useState, useTransition } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
 
 export default function Login() {
@@ -29,10 +28,11 @@ export default function Login() {
 
     setTransition(async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/login`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         }
       );
@@ -44,7 +44,6 @@ export default function Login() {
         return;
       }
 
-      Cookies.set("token", json.token, { expires: 1 });
       redirect("/");
     });
   };
