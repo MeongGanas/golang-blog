@@ -20,6 +20,18 @@ func Register(c *fiber.Ctx) error {
 		return err
 	}
 
+	if data["name"] == "" || data["password"] == "" || data["email"] == "" {
+		return c.Status(400).JSON(fiber.Map{"msg": "A field is missing!"})
+	}
+
+	var existingUser models.User
+
+	database.DB.Where("email = ?", data["email"]).First(&existingUser)
+
+	if existingUser.Id != 0 {
+		return c.Status(400).JSON(fiber.Map{"msg": "User already been taken!"})
+	}
+
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
 
 	user := models.User{
@@ -72,7 +84,7 @@ func Login(c *fiber.Ctx) error {
 
 	c.Cookie(&cookie)
 
-	return c.Status(200).JSON(fiber.Map{"msg": "Login success!"})
+	return c.Status(200).JSON(fiber.Map{"token": token})
 }
 
 func User(c *fiber.Ctx) error {
