@@ -23,7 +23,7 @@ func GetCurrentUser(c *fiber.Ctx) (*models.User, error) {
 	claims := token.Claims.(*jwt.StandardClaims)
 
 	var user models.User
-	result := database.DB.Where("id = ?", claims.Issuer).First(&user)
+	result := database.DB.Preload("Discussions").Where("id = ?", claims.Issuer).First(&user)
 
 	if result.Error != nil {
 		return nil, result.Error

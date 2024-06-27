@@ -1,11 +1,9 @@
-import Navbar from "@/components/navbar";
+"use client";
+
 import React from "react";
 import "./globals.css";
-
-export const metadata = {
-  title: "Blog App",
-  description: "Blog App",
-};
+import { Provider } from "react-redux";
+import store from "./store";
 
 export default function RootLayout({
   children,
@@ -13,8 +11,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className="dark">
+      <Provider store={store}>
+        <head>
+          <title>Discussion App</title>
+          <meta name="description" content="Discussion App" />
+        </head>
+        <body>{children}</body>
+      </Provider>
     </html>
   );
 }

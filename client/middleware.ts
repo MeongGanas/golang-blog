@@ -7,23 +7,40 @@ export async function middleware(request: NextRequest) {
 
   const cookie = request.headers.get("cookie") || "";
 
-  const response = await (
-    await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/user`, {
-      headers: { "Content-Type": "application/json", cookie },
-    })
-  ).json();
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/user`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          cookie,
+        },
+        credentials: "include",
+      }
+    );
 
-  if (!response.id) {
-    if (isAuthPath) {
-      return NextResponse.next();
+    if (!response.ok) {
+      throw new Error("Authentication failed");
     }
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
 
-  if (isAuthPath) {
-    return NextResponse.redirect(new URL("/", request.url));
+    const user = await response.json();
+
+    if (!user.id) {
+      return isAuthPath
+        ? NextResponse.next()
+        : NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    return isAuthPath
+      ? NextResponse.redirect(new URL("/", request.url))
+      : NextResponse.next();
+  } catch (error) {
+    console.error("Authentication error:", error);
+
+    return isAuthPath
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL("/login", request.url));
   }
-  return NextResponse.next();
 }
 
 export const config = {

@@ -1,16 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { SyntheticEvent, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import {
@@ -25,35 +18,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { setUser, useUserDispatch } from "@/app/store";
+import { Textarea } from "@/components/ui/textarea";
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Email must be a valid email",
+const discussionSchema = z.object({
+  title: z.string().min(2, {
+    message: "Title must be contains 2 character or more",
   }),
-  password: z.string(),
+  body: z.string().min(5, {
+    message: "Body must be contains 2 character or more",
+  }),
 });
 
-export default function Login() {
+export default function CreateDiscussion() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState(null);
-  const dispatch = useUserDispatch();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof discussionSchema>>({
+    resolver: zodResolver(discussionSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      title: "",
+      body: "",
     },
   });
 
-  const login = (values: z.infer<typeof formSchema>) => {
+  const CreateDiscussion = (values: z.infer<typeof discussionSchema>) => {
     setError(null);
 
     startTransition(async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/discussion`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -69,20 +63,15 @@ export default function Login() {
         return;
       }
 
-      dispatch(setUser(json.user));
-
-      router.push("/");
+      router.push("/discussions");
     });
   };
 
   return (
-    <div className="flex h-screen items-center">
+    <div>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
+          <CardTitle className="text-2xl">Create a new discussion</CardTitle>
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -93,20 +82,23 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(login)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(CreateDiscussion)}
+              className="space-y-4"
+            >
               <div className="space-y-2">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input
-                          type="email"
+                          type="text"
                           required
-                          autoComplete="email"
-                          placeholder="Your email"
+                          autoComplete="title"
+                          placeholder="Your discussion title"
                           {...field}
                         />
                       </FormControl>
@@ -116,17 +108,15 @@ export default function Login() {
                 />
                 <FormField
                   control={form.control}
-                  name="password"
+                  name="body"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Body</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          required
-                          placeholder="Your password"
-                          autoComplete="current-password"
+                        <Textarea
                           {...field}
+                          required
+                          placeholder="Your discussion description"
                         />
                       </FormControl>
                       <FormMessage />
@@ -135,16 +125,10 @@ export default function Login() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={isPending}>
-                Login
+                Create a discussion
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="underline">
-              Sign up
-            </Link>
-          </div>
         </CardContent>
       </Card>
     </div>

@@ -1,4 +1,4 @@
-import { CircleUser, Menu, Package2, Search } from "lucide-react";
+import { CircleUser, Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -12,8 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { usePathname, useRouter } from "next/navigation";
+import { clearUser, useUser, useUserDispatch } from "@/app/store";
 
 export default function Navbar() {
+  const user = useUser((state) => state.user);
+  const dispatch = useUserDispatch();
+
   const router = useRouter();
   const currentPath = usePathname();
 
@@ -23,18 +27,21 @@ export default function Navbar() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
-      .then((res) => router.push("/login"))
+      .then(() => {
+        dispatch(clearUser());
+        router.push("/login");
+      })
       .catch((err) => console.log(err));
   };
 
   return (
-    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base mr-8"
         >
-          <span>Blog</span>
+          <span>Discussion App</span>
         </Link>
         <Link
           href="/"
@@ -47,7 +54,7 @@ export default function Navbar() {
         <Link
           href="/discussions"
           className={`${
-            currentPath === "/discussion"
+            currentPath === "/discussions"
               ? "text-foreground"
               : "text-muted-foreground"
           } transition-colors hover:text-foreground`}
@@ -55,14 +62,34 @@ export default function Navbar() {
           Discussions
         </Link>
         <Link
-          href="/profile"
+          href="/discussions/create"
           className={`${
-            currentPath === "/profile"
+            currentPath === "/discussions/create"
               ? "text-foreground"
               : "text-muted-foreground"
           } transition-colors hover:text-foreground`}
         >
-          Profile
+          Create Discussions
+        </Link>
+        <Link
+          href={`/discussions/${user?.id}`}
+          className={`${
+            currentPath === `/discussions/${user?.id}`
+              ? "text-foreground"
+              : "text-muted-foreground"
+          } transition-colors hover:text-foreground`}
+        >
+          My Discussions
+        </Link>
+        <Link
+          href="/settings"
+          className={`${
+            currentPath === "/settings"
+              ? "text-foreground"
+              : "text-muted-foreground"
+          } transition-colors hover:text-foreground`}
+        >
+          Settings
         </Link>
       </nav>
       <Sheet>
@@ -78,7 +105,7 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <span>Blog</span>
+              <span>Discussion App</span>
             </Link>
             <Link
               href="/"
@@ -101,19 +128,39 @@ export default function Navbar() {
               Discussions
             </Link>
             <Link
-              href="/profile"
+              href="/discussions/create"
+              className={`${
+                currentPath === "/discussions/create"
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground`}
+            >
+              Create Discussions
+            </Link>
+            <Link
+              href={`/discussions/${user?.id}`}
+              className={`${
+                currentPath === `/discussions/${user?.id}`
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground`}
+            >
+              My Discussions
+            </Link>
+            <Link
+              href="/settings"
               className={`${
                 currentPath === "/settings"
                   ? "text-foreground"
                   : "text-muted-foreground"
               } transition-colors hover:text-foreground`}
             >
-              Profile
+              Settings
             </Link>
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+      <div className="flex w-full lg:w-fit items-center gap-4 md:gap-2 lg:gap-4">
         <form className="ml-auto flex-1 sm:flex-initial">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -132,9 +179,15 @@ export default function Navbar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              {user ? user.username : "My Account"}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/settings" className="w-full">
+                Settings
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Button
