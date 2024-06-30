@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
+import toast from "react-hot-toast";
 
 const discussionSchema = z.object({
   title: z.string().min(2, {
@@ -62,6 +63,8 @@ export default function CreateDiscussion() {
         setError(json.msg || "Something went wrong!");
         return;
       }
+
+      toast.success("Create discussion success!");
 
       router.push("/discussions");
     });

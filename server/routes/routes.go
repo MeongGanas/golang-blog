@@ -7,6 +7,7 @@ import (
 
 func Setup(app *fiber.App) {
 	app.Get("/api/discussion", controllers.GetAllDisucssion)
+	app.Get("/api/discussion/:id/detail", controllers.GetDiscussionById)
 	app.Get("/api/discussion/:userId", controllers.GetDiscussionByUserId)
 	app.Post("/api/discussion", controllers.CreateDiscussion)
 	app.Patch("/api/discussion/:id", controllers.EditDiscussion)

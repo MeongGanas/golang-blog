@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -45,7 +46,6 @@ const formSchema = z.object({
 export default function Register() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,7 +58,6 @@ export default function Register() {
   });
 
   const register = (values: z.infer<typeof formSchema>) => {
-    setError(null);
     startTransition(async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
@@ -69,10 +68,13 @@ export default function Register() {
         }
       );
       const json = await response.json();
+
       if (!response.ok) {
-        setError(json.msg || "Something went wrong!");
+        toast.error(json.msg || "Something went wrong!");
         return;
       }
+
+      toast.success("Register Success!");
       router.push("/login");
     });
   };
@@ -85,13 +87,6 @@ export default function Register() {
           <CardDescription>
             Enter your email below to register your account
           </CardDescription>
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
         </CardHeader>
         <CardContent>
           <Form {...form}>

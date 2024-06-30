@@ -4,6 +4,7 @@ import React from "react";
 import "./globals.css";
 import { Provider } from "react-redux";
 import store from "./store";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -17,7 +18,10 @@ export default function RootLayout({
           <title>Discussion App</title>
           <meta name="description" content="Discussion App" />
         </head>
-        <body>{children}</body>
+        <body>
+          <Toaster />
+          {children}
+        </body>
       </Provider>
     </html>
   );

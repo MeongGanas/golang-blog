@@ -19,11 +19,19 @@ export default function Discussions() {
     })();
   }, []);
 
+  const handleDelete = (id: number) => {
+    setDiscussions(discussions.filter((discussion) => discussion.id !== id));
+  };
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
       {discussions &&
         discussions.map((discussion) => (
-          <DiscussionCard discussion={discussion} key={discussion.id} />
+          <DiscussionCard
+            discussion={discussion}
+            onDelete={handleDelete}
+            key={discussion.id}
+          />
         ))}
     </div>
   );

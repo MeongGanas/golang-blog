@@ -29,7 +29,12 @@ func Register(c *fiber.Ctx) error {
 
 	result := database.DB.Where("email = ?", data["email"]).First(&existingUser)
 	if result.RowsAffected > 0 {
-		return c.Status(400).JSON(fiber.Map{"msg": "User already taken!"})
+		return c.Status(400).JSON(fiber.Map{"msg": "Email already taken!"})
+	}
+
+	result = database.DB.Where("username = ?", data["username"]).First(&existingUser)
+	if result.RowsAffected > 0 {
+		return c.Status(400).JSON(fiber.Map{"msg": "Username already taken!"})
 	}
 
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)

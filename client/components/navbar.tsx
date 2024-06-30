@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import { usePathname, useRouter } from "next/navigation";
 import { clearUser, useUser, useUserDispatch } from "@/app/store";
+import toast from "react-hot-toast";
 
 export default function Navbar() {
   const user = useUser((state) => state.user);
@@ -29,6 +30,7 @@ export default function Navbar() {
     })
       .then(() => {
         dispatch(clearUser());
+        toast.success("Logout Success!");
         router.push("/login");
       })
       .catch((err) => console.log(err));
@@ -39,7 +41,7 @@ export default function Navbar() {
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold md:text-base mr-8"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base lg:mr-8"
         >
           <span>Discussion App</span>
         </Link>
@@ -189,11 +191,11 @@ export default function Navbar() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="p-0">
               <Button
                 variant={"ghost"}
                 onClick={logout}
-                className="h-fit p-0 font-normal w-full justify-normal"
+                className="h-fit p-0 font-normal w-full justify-normal py-1.5 px-2"
               >
                 Logout
               </Button>

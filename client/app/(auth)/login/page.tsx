@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { SyntheticEvent, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import {
@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { setUser, useUserDispatch } from "@/app/store";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -37,7 +38,6 @@ const formSchema = z.object({
 export default function Login() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState(null);
   const dispatch = useUserDispatch();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,8 +49,6 @@ export default function Login() {
   });
 
   const login = (values: z.infer<typeof formSchema>) => {
-    setError(null);
-
     startTransition(async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
@@ -65,11 +63,13 @@ export default function Login() {
       const json = await response.json();
 
       if (!response.ok) {
-        setError(json.msg || "Something went wrong!");
+        toast.error(json.msg || "Something went wrong!");
         return;
       }
 
       dispatch(setUser(json.user));
+
+      toast.success("Loggin Success!");
 
       router.push("/");
     });
@@ -83,13 +83,6 @@ export default function Login() {
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
         </CardHeader>
         <CardContent>
           <Form {...form}>

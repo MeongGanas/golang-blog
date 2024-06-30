@@ -17,6 +17,18 @@ func GetAllDisucssion(c *fiber.Ctx) error {
 	return c.Status(200).JSON(discussions)
 }
 
+func GetDiscussionById(c *fiber.Ctx) error {
+	discussionId := c.Params("id")
+
+	var discussion models.Discussion
+
+	if err := database.DB.Preload("User").Where("id = ?", discussionId).Find(&discussion).Error; err != nil {
+		return c.Status(400).JSON(fiber.Map{"msg": "Discussion not found!"})
+	}
+
+	return c.Status(200).JSON(discussion)
+}
+
 func GetDiscussionByUserId(c *fiber.Ctx) error {
 	userId := c.Params("userId")
 
@@ -107,5 +119,5 @@ func DeleteDiscussion(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"msg": "Failed to delete discussion", "error": err.Error()})
 	}
 
-	return c.Status(400).JSON(fiber.Map{"msg": "Delete discussion success!"})
+	return c.Status(200).JSON(fiber.Map{"msg": "Delete discussion success!"})
 }
