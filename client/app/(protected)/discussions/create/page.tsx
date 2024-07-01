@@ -20,20 +20,11 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
-
-const discussionSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be contains 2 character or more",
-  }),
-  body: z.string().min(5, {
-    message: "Body must be contains 2 character or more",
-  }),
-});
+import { discussionSchema } from "@/schema/formSchema";
 
 export default function CreateDiscussion() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState(null);
 
   const form = useForm<z.infer<typeof discussionSchema>>({
     resolver: zodResolver(discussionSchema),
@@ -44,8 +35,6 @@ export default function CreateDiscussion() {
   });
 
   const CreateDiscussion = (values: z.infer<typeof discussionSchema>) => {
-    setError(null);
-
     startTransition(async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/discussion`,
@@ -60,7 +49,7 @@ export default function CreateDiscussion() {
       const json = await response.json();
 
       if (!response.ok) {
-        setError(json.msg || "Something went wrong!");
+        toast.error(json.msg || "Something went wrong!");
         return;
       }
 
@@ -75,13 +64,6 @@ export default function CreateDiscussion() {
       <Card className="mx-auto max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Create a new discussion</CardTitle>
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
         </CardHeader>
         <CardContent>
           <Form {...form}>

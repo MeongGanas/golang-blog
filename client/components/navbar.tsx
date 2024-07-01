@@ -1,7 +1,7 @@
 import { CircleUser, Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { Input } from "./ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -38,7 +38,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 flex h-16 items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
-      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+      <nav className="hidden flex-col gap-6 text-lg font-medium lg:flex lg:flex-row lg:items-center lg:text-sm lg:gap-6">
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base lg:mr-8"
@@ -96,69 +96,81 @@ export default function Navbar() {
       </nav>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+          <Button variant="outline" size="icon" className="shrink-0 lg:hidden">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-lg font-semibold"
-            >
-              <span>Discussion App</span>
-            </Link>
-            <Link
-              href="/"
-              className={`${
-                currentPath === "/"
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              } transition-colors hover:text-foreground`}
-            >
-              Home
-            </Link>
-            <Link
-              href="/discussions"
-              className={`${
-                currentPath === "/discussion"
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              } transition-colors hover:text-foreground`}
-            >
-              Discussions
-            </Link>
-            <Link
-              href="/discussions/create"
-              className={`${
-                currentPath === "/discussions/create"
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              } transition-colors hover:text-foreground`}
-            >
-              Create Discussions
-            </Link>
-            <Link
-              href={`/discussions/${user?.id}`}
-              className={`${
-                currentPath === `/discussions/${user?.id}`
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              } transition-colors hover:text-foreground`}
-            >
-              My Discussions
-            </Link>
-            <Link
-              href="/settings"
-              className={`${
-                currentPath === "/settings"
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              } transition-colors hover:text-foreground`}
-            >
-              Settings
-            </Link>
+            <SheetClose asChild>
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-lg font-semibold"
+              >
+                <span>Discussion App</span>
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link
+                href="/"
+                className={`${
+                  currentPath === "/"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                } transition-colors hover:text-foreground`}
+              >
+                Home
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link
+                href="/discussions"
+                className={`${
+                  currentPath === "/discussions"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                } transition-colors hover:text-foreground`}
+              >
+                Discussions
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link
+                href="/discussions/create"
+                className={`${
+                  currentPath === "/discussions/create"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                } transition-colors hover:text-foreground`}
+              >
+                Create Discussions
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link
+                href={`/discussions/${user?.id}`}
+                className={`${
+                  currentPath === `/discussions/${user?.id}`
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                } transition-colors hover:text-foreground`}
+              >
+                My Discussions
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link
+                href="/settings"
+                className={`${
+                  currentPath === "/settings"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                } transition-colors hover:text-foreground`}
+              >
+                Settings
+              </Link>
+            </SheetClose>
           </nav>
         </SheetContent>
       </Sheet>

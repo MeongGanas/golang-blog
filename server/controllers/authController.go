@@ -119,3 +119,14 @@ func Logout(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(fiber.Map{"msg": "Logout success"})
 }
+
+func GetUserData(c *fiber.Ctx) error {
+	userId := c.Params("userId")
+	var user models.User
+
+	if err := database.DB.Where("id = ?", userId).Find(&user).Error; err != nil {
+		return c.Status(400).JSON(fiber.Map{"msg": "Fail to get user"})
+	}
+
+	return c.Status(200).JSON(user)
+}

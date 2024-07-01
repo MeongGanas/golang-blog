@@ -89,7 +89,13 @@ export default function DiscussionCard({
         </CardHeader>
         <CardContent>
           <p className="mb-4 text-xs text-muted-foreground">
-            By. {discussion.user.username}
+            By.{" "}
+            <Link
+              className="hover:underline"
+              href={`/discussions/${discussion.userId}`}
+            >
+              {discussion.user.username}
+            </Link>
           </p>
 
           <p className="text-sm mb-3 text-muted-foreground">

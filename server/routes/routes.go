@@ -13,6 +13,8 @@ func Setup(app *fiber.App) {
 	app.Patch("/api/discussion/:id", controllers.EditDiscussion)
 	app.Delete("/api/discussion/:id", controllers.DeleteDiscussion)
 
+	app.Get("/api/user/:userId", controllers.GetUserData)
+
 	app.Post("/auth/register", controllers.Register)
 	app.Post("/auth/login", controllers.Login)
 	app.Get("/auth/user", controllers.User)

@@ -12,7 +12,7 @@ import (
 func GetAllDisucssion(c *fiber.Ctx) error {
 	var discussions []models.Discussion
 
-	database.DB.Preload("User").Find(&discussions)
+	database.DB.Preload("User").Order("created_at desc").Find(&discussions)
 
 	return c.Status(200).JSON(discussions)
 }
@@ -34,7 +34,7 @@ func GetDiscussionByUserId(c *fiber.Ctx) error {
 
 	var discussions []models.Discussion
 
-	database.DB.Preload("User").Where("user_id = ?", userId).Find(&discussions)
+	database.DB.Preload("User").Where("user_id = ?", userId).Order("created_at desc").Find(&discussions)
 
 	return c.Status(200).JSON(discussions)
 }
